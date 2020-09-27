@@ -4,8 +4,23 @@ import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 
 import { getGallery } from '../../service/api-service';
-import { GalleryOptions, Section, Sort, Window } from '../../service/models';
-import { Card } from '@material-ui/core';
+import {
+  Section,
+  SectionParams,
+  Sort,
+  SortParams,
+  Window,
+  WindowParams,
+} from '../../service/models';
+import {
+  Card,
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
+} from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -37,13 +52,25 @@ const useStyles = makeStyles(() => ({
     color: '#fff',
     borderRadius: '0 0 4px 4px',
   },
+  filterContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '16px',
+    backgroundColor: '#fafafa',
+    borderRadius: '4px',
+    marginBottom: '16px',
+  },
+  formControl: {
+    minWidth: 120,
+  },
 }));
 
 const Gallery = (props) => {
   const classes = useStyles();
 
   const [gallery, updateGallery] = useState([]);
-  const [isFetching, setIsFetching] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const [page, setPage] = useState(1);
   const [section, setSection] = useState(Section.HOT);
   const [sort, setSort] = useState(Sort.VIRAL);
@@ -51,6 +78,7 @@ const Gallery = (props) => {
   const [showViral, setShowViral] = useState(true);
   const [showMature, setShowMature] = useState(false);
   const [albumPreviews, setAlbumPreviews] = useState(false);
+  const [replaceContent, setReplaceContent] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -62,25 +90,40 @@ const Gallery = (props) => {
     fetchMoreImages();
   }, [isFetching]);
 
+  useEffect(() => {
+    if (!isFetching) fetchData();
+  }, [section, sort, windowFilter, showViral, showMature, albumPreviews]);
+
   const handleScroll = () => {
     if (
       Math.ceil(window.innerHeight + document.documentElement.scrollTop) !==
         document.documentElement.offsetHeight ||
       isFetching
-    )
+    ) {
       return;
+    }
     setIsFetching(true);
   };
 
   const fetchData = async () => {
+    const galleryOptions = {
+      section,
+      sort,
+      window: windowFilter,
+      page,
+      showViral,
+      showMature,
+      albumPreviews,
+    };
     setTimeout(async () => {
-      await getGallery()
+      await getGallery(galleryOptions)
         .then((response) => response.json())
         .then((result) => {
           setPage(page + 1);
           updateGallery(() => {
-            return [...gallery, ...result.data];
+            return replaceContent ? result.data : [...gallery, ...result.data];
           });
+          setReplaceContent(false);
         })
         .catch((error) => console.log('Gallery fetch error', error));
     }, 1000);
@@ -96,8 +139,82 @@ const Gallery = (props) => {
     history.push(`/image/${image.id}`);
   };
 
+  const handleSectionChange = (event) => {
+    setReplaceContent(true);
+    setSection(event.target.value);
+  };
+
+  const handleSortParamChange = (event) => {
+    setReplaceContent(true);
+    setSort(event.target.value);
+  };
+
+  const handleWindowParamChange = (event) => {
+    setReplaceContent(true);
+    setWindow(event.target.value);
+  };
+
+  const handleShowViral = (event) => {
+    setReplaceContent(true);
+    setShowViral(event.target.checked);
+  };
+
   return (
     <div className={classes.root}>
+      <div className={classes.filterContainer}>
+        <FormControl className={classes.formControl}>
+          <InputLabel id='demo-simple-select-label'>Section</InputLabel>
+          <Select
+            labelId='demo-simple-select-label'
+            id='demo-simple-select'
+            value={section}
+            onChange={(event) => handleSectionChange(event)}
+          >
+            {SectionParams.map((param, i) => (
+              <MenuItem key={i} value={param.value}>
+                {param.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <div style={{ flex: '3' }}></div>
+        <FormControl className={classes.formControl}>
+          <InputLabel id='demo-simple-select-label'>Sort</InputLabel>
+          <Select
+            labelId='demo-simple-select-label'
+            id='demo-simple-select'
+            value={sort}
+            onChange={(event) => handleSortParamChange(event)}
+          >
+            {SortParams.map((param, i) => (
+              <MenuItem key={i} value={param.value}>
+                {param.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <div style={{ flex: '.25' }}></div>
+        <FormControl className={classes.formControl}>
+          <InputLabel id='demo-simple-select-label'>Window</InputLabel>
+          <Select
+            labelId='demo-simple-select-label'
+            id='demo-simple-select'
+            value={windowFilter}
+            onChange={(event) => handleWindowParamChange(event)}
+          >
+            {WindowParams.map((param, i) => (
+              <MenuItem key={i} value={param.value}>
+                {param.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <div style={{ flex: '.25' }}></div>
+        <FormControlLabel
+          control={<Checkbox checked={showViral} onChange={handleShowViral} name='show-viral' color='primary'/>}
+          label='Show Viral'
+        />
+      </div>
       <Grid container spacing={3}>
         {gallery.map((listItem) => (
           <Grid item xs={12} sm={6} md={3} key={listItem.id}>

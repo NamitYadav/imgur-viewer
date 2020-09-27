@@ -4,11 +4,24 @@ export enum Section {
   USER = 'user'
 }
 
+export const SectionParams = [
+  { label: 'Hot', value: Section.HOT },
+  { label: 'Top', value: Section.TOP },
+  { label: 'User', value: Section.USER }
+];
+
+
 export enum Sort {
   VIRAL = 'viral',
   TOP = 'top',
   TIME = 'time'
 }
+
+export const SortParams = [
+  { label: 'Viral', value: Sort.VIRAL },
+  { label: 'Top', value: Sort.TOP },
+  { label: 'Time', value: Sort.TIME },
+];
 
 export enum Window {
   DAY = 'day',
@@ -17,6 +30,14 @@ export enum Window {
   YEAR = 'year',
   ALL = 'all'
 }
+
+export const WindowParams = [
+  { label: 'Day', value: Window.DAY },
+  { label: 'Week', value: Window.WEEK },
+  { label: 'Month', value: Window.MONTH },
+  { label: 'Year', value: Window.YEAR },
+  { label: 'All', value: Window.ALL },
+];
 
 export interface GalleryOptions {
   section?: Section,
