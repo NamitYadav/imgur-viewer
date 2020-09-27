@@ -9,8 +9,8 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route exact path='/' component={Gallery} />
-        <Route path='/image/:id' component={ImageViewer} />
+        <Route exact path='/' render={(props) => <Gallery {...props} />} />
+        <Route path='/image/:id' render={(props) => <ImageViewer {...props} />} />
       </Switch>
     </Router>
   );

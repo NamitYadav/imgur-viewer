@@ -2,10 +2,8 @@
 import React, { Suspense, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { Link } from 'react-router-dom';
 
 import { getGallery } from '../../service/api-service';
-import ImageViewer from '../image-viewer/image-viewer';
 import { GalleryOptions, Section, Sort, Window } from '../../service/models';
 import { Card } from '@material-ui/core';
 
@@ -41,7 +39,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Gallery = () => {
+const Gallery = (props) => {
   const classes = useStyles();
 
   const [gallery, updateGallery] = useState([]);
@@ -79,13 +77,12 @@ const Gallery = () => {
       await getGallery()
         .then((response) => response.json())
         .then((result) => {
-          console.log('Result', result);
           setPage(page + 1);
           updateGallery(() => {
             return [...gallery, ...result.data];
           });
         })
-        .catch((error) => console.log('error', error));
+        .catch((error) => console.log('Gallery fetch error', error));
     }, 1000);
   };
 
@@ -94,21 +91,26 @@ const Gallery = () => {
     setIsFetching(false);
   };
 
+  const handleImageClick = (image) => {
+    const { history } = props;
+    history.push(`/image/${image.id}`);
+  };
+
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
         {gallery.map((listItem) => (
           <Grid item xs={12} sm={6} md={3} key={listItem.id}>
             <Card className={classes.card}>
-              <Link to={listItem.images && listItem.images[0] && `/image/${listItem.images[0].id}`}>
-                <div className={classes.image}>
-                  <Suspense fallback={<image src='https://via.placeholder.com/150'></image>}>
-                    <ImageViewer
-                      src={listItem.images && listItem.images[0] && listItem.images[0].link}
-                    />
-                  </Suspense>
-                </div>
-              </Link>
+              <div className={classes.image}>
+                <Suspense fallback={<image src='https://via.placeholder.com/150'></image>}>
+                  <img
+                    src={listItem.images && listItem.images[0] && listItem.images[0].link}
+                    alt=''
+                    onClick={() => handleImageClick(listItem.images[0])}
+                  />
+                </Suspense>
+              </div>
               <div className={classes.title}>{listItem.title}</div>
             </Card>
           </Grid>
