@@ -10,6 +10,14 @@ export enum Sort {
   TIME = 'time'
 }
 
+export enum Window {
+  DAY = 'day',
+  WEEK = 'week',
+  MONTH = 'month',
+  YEAR = 'year',
+  ALL = 'all'
+}
+
 export interface GalleryOptions {
   section?: Section,
   sort?: Sort,

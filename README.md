@@ -14,23 +14,20 @@ Simple web app that allows one to browse the Imgur gallery using React
 
 ### APIs used
 
-#####Initialise Request
+##### Initialise Request
 ```javascript
 var myHeaders = new Headers();
 myHeaders.append("Authorization", "Client-ID {{clientId}}");
 
-var formdata = new FormData();
-
 var requestOptions = {
   method: 'GET',
   headers: myHeaders,
-  body: formdata,
   redirect: 'follow'
 };
 ```
 
 
-#####Get Gallery Images
+##### Get Gallery Images
 
 ```javascript
 
@@ -41,7 +38,7 @@ fetch("https://api.imgur.com/3/gallery/{{section}}/{{sort}}/{{window}}/{{page}}?
 ```
 
 
-#####Get Image
+##### Get Image
 ```javascript
 fetch("https://api.imgur.com/3/image/{{imageHash}}", requestOptions)
   .then(response => response.text())
