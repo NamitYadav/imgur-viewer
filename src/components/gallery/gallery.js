@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { Suspense, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
+import { AutoSizer, List } from 'react-virtualized';
 
 import { getGallery } from '../../service/api-service';
 import {
@@ -24,9 +24,13 @@ import {
   Toolbar,
 } from '@material-ui/core';
 
+const CARD_WIDTH = 340;
+
 const useStyles = makeStyles(() => ({
   root: {
-    padding: '64px',
+    padding: '16px 80px',
+    marginTop: 20,
+    justifyContent: 'flex-start',
     background: '#2d3135',
     minHeight: '100vh',
     '@media (max-width: 720px)': {
@@ -36,11 +40,29 @@ const useStyles = makeStyles(() => ({
   grid: {
     marginTop: '80px',
   },
+  Row: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    padding: '0 0.5rem',
+    boxSizing: 'border-box',
+    marginBottom: '20px',
+  },
+  Item: {
+    width: '340px',
+    height: '305px',
+    display: 'inline-flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    margin: '15px 10px',
+  },
   card: {
     display: 'flex',
     flexDirection: 'column',
-    height: '400px',
-    padding: '8px',
+    height: '100%',
+    width: '100%',
     cursor: 'pointer',
     '&:hover': {
       transform: 'scale(1.04)',
@@ -48,7 +70,8 @@ const useStyles = makeStyles(() => ({
     },
   },
   image: {
-    height: '350px',
+    width: '100%',
+    height: '250px',
     overflow: 'hidden',
   },
   title: {
@@ -234,24 +257,65 @@ const Gallery = (props) => {
           </div>
         </Toolbar>
       </AppBar>
-      <Grid container spacing={3} className={classes.grid}>
-        {gallery.map((listItem) => (
-          <Grid item xs={12} sm={6} md={3} key={listItem.id}>
-            <Card className={classes.card}>
-              <div className={classes.image}>
-                <Suspense fallback={<image src='https://via.placeholder.com/150'></image>}>
-                  <img
-                    src={listItem.images && listItem.images[0] && listItem.images[0].link}
-                    alt=''
-                    onClick={() => handleImageClick(listItem.images[0])}
-                  />
-                </Suspense>
-              </div>
-              <div className={classes.title}>{listItem.title}</div>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+
+      <AutoSizer>
+        {({ height, width }) => {
+          const itemsPerRow = Math.floor(width / CARD_WIDTH) || 1;
+
+          const rowCount = Math.ceil(gallery.length / itemsPerRow);
+
+          return (
+            <div>
+              <List
+                width={width}
+                height={height}
+                rowCount={rowCount}
+                rowHeight={CARD_WIDTH}
+                rowRenderer={({ index, key, style }) => {
+                  style = {
+                    ...style,
+                    margin: '64px 0',
+                  };
+                  const items = [];
+                  const fromIndex = index * itemsPerRow;
+                  const toIndex = Math.min(fromIndex + itemsPerRow, gallery.length);
+
+                  for (let i = fromIndex; i < toIndex; i++) {
+                    let listItem = gallery[i];
+
+                    items.push(
+                      <div className={classes.Item} key={i}>
+                        <Card className={classes.card}>
+                          <div className={classes.image}>
+                            <Suspense
+                              fallback={<image src='https://via.placeholder.com/150'></image>}
+                            >
+                              <img
+                                src={
+                                  listItem.images && listItem.images[0] && listItem.images[0].link
+                                }
+                                alt=''
+                                onClick={() => handleImageClick(listItem.images[0])}
+                              />
+                            </Suspense>
+                          </div>
+                          <div className={classes.title}>{listItem.title}</div>
+                        </Card>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div className={classes.Row} key={key} style={style}>
+                      {items}
+                    </div>
+                  );
+                }}
+              />
+            </div>
+          );
+        }}
+      </AutoSizer>
       {isFetching && <h1>Fetching more list items...</h1>}
     </div>
   );
