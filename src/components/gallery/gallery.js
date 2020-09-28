@@ -13,6 +13,7 @@ import {
   WindowParams,
 } from '../../service/models';
 import {
+  AppBar,
   Card,
   Checkbox,
   FormControl,
@@ -20,12 +21,20 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Toolbar,
 } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
   root: {
     padding: '64px',
     background: '#2d3135',
+    minHeight: '100vh',
+    '@media (max-width: 720px)': {
+      padding: '16px',
+    },
+  },
+  grid: {
+    marginTop: '80px',
   },
   card: {
     display: 'flex',
@@ -58,8 +67,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
     padding: '16px',
     backgroundColor: '#fafafa',
-    borderRadius: '4px',
-    marginBottom: '16px',
+    width: '100%',
   },
   formControl: {
     minWidth: 120,
@@ -161,61 +169,72 @@ const Gallery = (props) => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.filterContainer}>
-        <FormControl className={classes.formControl}>
-          <InputLabel id='demo-simple-select-label'>Section</InputLabel>
-          <Select
-            labelId='demo-simple-select-label'
-            id='demo-simple-select'
-            value={section}
-            onChange={(event) => handleSectionChange(event)}
-          >
-            {SectionParams.map((param, i) => (
-              <MenuItem key={i} value={param.value}>
-                {param.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <div style={{ flex: '3' }}></div>
-        <FormControl className={classes.formControl}>
-          <InputLabel id='demo-simple-select-label'>Sort</InputLabel>
-          <Select
-            labelId='demo-simple-select-label'
-            id='demo-simple-select'
-            value={sort}
-            onChange={(event) => handleSortParamChange(event)}
-          >
-            {SortParams.map((param, i) => (
-              <MenuItem key={i} value={param.value}>
-                {param.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <div style={{ flex: '.25' }}></div>
-        <FormControl className={classes.formControl}>
-          <InputLabel id='demo-simple-select-label'>Window</InputLabel>
-          <Select
-            labelId='demo-simple-select-label'
-            id='demo-simple-select'
-            value={windowFilter}
-            onChange={(event) => handleWindowParamChange(event)}
-          >
-            {WindowParams.map((param, i) => (
-              <MenuItem key={i} value={param.value}>
-                {param.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <div style={{ flex: '.25' }}></div>
-        <FormControlLabel
-          control={<Checkbox checked={showViral} onChange={handleShowViral} name='show-viral' color='primary'/>}
-          label='Show Viral'
-        />
-      </div>
-      <Grid container spacing={3}>
+      <AppBar position='fixed' color='default'>
+        <Toolbar>
+          <div className={classes.filterContainer}>
+            <FormControl className={classes.formControl}>
+              <InputLabel id='demo-simple-select-label'>Section</InputLabel>
+              <Select
+                labelId='demo-simple-select-label'
+                id='demo-simple-select'
+                value={section}
+                onChange={(event) => handleSectionChange(event)}
+              >
+                {SectionParams.map((param, i) => (
+                  <MenuItem key={i} value={param.value}>
+                    {param.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <div style={{ flex: '3' }}></div>
+            <FormControl className={classes.formControl}>
+              <InputLabel id='demo-simple-select-label'>Sort</InputLabel>
+              <Select
+                labelId='demo-simple-select-label'
+                id='demo-simple-select'
+                value={sort}
+                onChange={(event) => handleSortParamChange(event)}
+              >
+                {SortParams.map((param, i) => (
+                  <MenuItem key={i} value={param.value}>
+                    {param.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <div style={{ flex: '.25' }}></div>
+            <FormControl className={classes.formControl}>
+              <InputLabel id='demo-simple-select-label'>Window</InputLabel>
+              <Select
+                labelId='demo-simple-select-label'
+                id='demo-simple-select'
+                value={windowFilter}
+                onChange={(event) => handleWindowParamChange(event)}
+              >
+                {WindowParams.map((param, i) => (
+                  <MenuItem key={i} value={param.value}>
+                    {param.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <div style={{ flex: '.25' }}></div>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={showViral}
+                  onChange={handleShowViral}
+                  name='show-viral'
+                  color='primary'
+                />
+              }
+              label='Show Viral'
+            />
+          </div>
+        </Toolbar>
+      </AppBar>
+      <Grid container spacing={3} className={classes.grid}>
         {gallery.map((listItem) => (
           <Grid item xs={12} sm={6} md={3} key={listItem.id}>
             <Card className={classes.card}>

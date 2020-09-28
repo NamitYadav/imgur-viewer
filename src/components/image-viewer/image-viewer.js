@@ -6,11 +6,16 @@ import { getImage } from '../../service/api-service';
 
 const useStyles = makeStyles(() => ({
   container: {
-    padding: '128px 64px',
+    padding: '64px',
     background: '#2d3135',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    minHeight: '100vh',
+    boxSizing: 'border-box',
+    '@media (max-width: 720px)': {
+      padding: '16px',
+    },
   },
   card: {
     padding: '8px',
