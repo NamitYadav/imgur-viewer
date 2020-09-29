@@ -1,46 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
-import { Card, makeStyles } from '@material-ui/core';
+import { Card, CircularProgress } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import { getImage } from '../../service/api-service';
-
-const useStyles = makeStyles(() => ({
-  container: {
-    padding: '64px',
-    background: '#2d3135',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '100vh',
-    boxSizing: 'border-box',
-    '@media (max-width: 720px)': {
-      padding: '16px',
-    },
-  },
-  card: {
-    padding: '8px',
-    background: '#474b50',
-    maxWidth: '800px'
-  },
-  image: {
-    width: '100%',
-  },
-  title: {
-    fontWeight: 'bold',
-    flex: '1',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: '#474b50',
-    color: '#fff',
-    borderRadius: '0 0 4px 4px',
-  },
-}));
+import useStyles from './image-viewer-styles';
 
 const ImageViewer = (props) => {
   const classes = useStyles();
 
   const [imageData, updateImage] = useState([]);
+  const [isFetching, setIsFetching] = useState(true);
 
   useEffect(() => {
     const imageId = props.match.params.id;
@@ -54,18 +25,45 @@ const ImageViewer = (props) => {
       .then((response) => response.json())
       .then((result) => {
         updateImage(() => result.data);
+        setIsFetching(false);
       })
       .catch((error) => console.log('Image fetch error', error));
   };
 
+  const handleBack = () => {
+    console.log(props);
+    props.history.goBack();
+  };
+
+  if (isFetching) {
+    return (
+      <div className={classes.progressContainer}>
+        <CircularProgress size='80px' />;
+      </div>
+    );
+  }
+
   return (
     <div className={classes.container}>
-      <Card className={classes.card}>
-        <img src={imageData.link} alt='Avatar' className={classes.image} />
-        <div className={classes.title}>{imageData.title}</div>
-        <div className={classes.title}>{imageData.description}</div>
-        <div className={classes.title}>{imageData.vote}</div>
-      </Card>
+      <div className='topBar'>
+        <Button
+          variant='contained'
+          color="primary"
+          className={classes.button}
+          startIcon={<ArrowBackIcon />}
+          onClick={handleBack}
+        >
+          Back
+        </Button>
+      </div>
+      <div className={classes.cardContainer}>
+        <Card className={classes.card}>
+          <img src={imageData.link} alt='Avatar' className={classes.image} />
+          <div className={classes.title}>{imageData.title}</div>
+          <div className={classes.title}>{imageData.description}</div>
+          <div className={classes.title}>{imageData.vote}</div>
+        </Card>
+      </div>
     </div>
   );
 };
