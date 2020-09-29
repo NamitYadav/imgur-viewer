@@ -19,8 +19,13 @@ const useStyles = makeStyles(() => ({
   },
   cardContainer: {
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  button: {
+    alignSelf: 'flex-start',
+    marginBottom: '16px',
   },
   card: {
     padding: '8px',
@@ -30,15 +35,28 @@ const useStyles = makeStyles(() => ({
   image: {
     width: '100%',
   },
-  title: {
-    fontWeight: 'bold',
-    flex: '1',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+  infoContainer: {
     background: '#474b50',
     color: '#fff',
     borderRadius: '0 0 4px 4px',
+    padding: '8px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: '1',
+  },
+  titleBar: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: '8px',
+    fontWeight: 'bold',
+  },
+  title: {
+    fontSize: '20px',
   },
 }));
 

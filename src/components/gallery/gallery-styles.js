@@ -15,12 +15,12 @@ const useStyles = makeStyles(() => ({
     minHeight: '100vh',
     '@media (max-width: 720px)': {
       padding: '16px',
+      paddingTop: '224px',
     },
   },
   title: {
     fontSize: '32px',
     fontWeight: 'bold',
-    textAlign: 'center',
     flex: '1',
     color: '#2d3135',
   },
@@ -78,10 +78,25 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
     padding: '16px',
     width: '100%',
+    '@media (max-width: 720px)': {
+      flexDirection: 'column',
+    },
   },
   formControl: {
     minWidth: '120px !important',
-    marginRight: '16px !important',
+    margin: '0 16px 0 0 !important',
+    '@media (max-width: 720px)': {
+      marginBottom: '8px !important',
+    },
+  },
+  emptyDiv: {
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '32px',
+    color: '#fff',
   },
 }));
 

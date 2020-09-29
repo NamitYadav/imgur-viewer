@@ -11,7 +11,7 @@ const ImageViewer = (props) => {
   const classes = useStyles();
 
   const [imageData, updateImage] = useState([]);
-  const [isFetching, setIsFetching] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
     const imageId = props.match.params.id;
@@ -21,6 +21,7 @@ const ImageViewer = (props) => {
   }, []);
 
   const fetchData = async (imageId) => {
+    setIsFetching(true);
     await getImage(imageId)
       .then((response) => response.json())
       .then((result) => {
@@ -45,7 +46,7 @@ const ImageViewer = (props) => {
 
   return (
     <div className={classes.container}>
-      <div className='topBar'>
+      <div className={classes.cardContainer}>
         <Button
           variant='contained'
           color='primary'
@@ -55,8 +56,6 @@ const ImageViewer = (props) => {
         >
           Back
         </Button>
-      </div>
-      <div className={classes.cardContainer}>
         <Card className={classes.card}>
           {imageData.type === 'image/jpeg' ||
           imageData.type === 'image/png' ||
@@ -67,10 +66,15 @@ const ImageViewer = (props) => {
               <source src={imageData.link} type='video/mp4' />
             </video>
           )}
-
-          <div className={classes.title}>{imageData.title}</div>
-          <div className={classes.title}>{imageData.description}</div>
-          <div className={classes.title}>{imageData.vote}</div>
+          <div className={classes.infoContainer}>
+            <div className={classes.titleBar}>
+              <div className={classes.title}>{imageData.title}</div>
+              <div className={classes.views}>{imageData.views} Views</div>
+            </div>
+            {imageData.description && (
+              <div className={classes.description}>{imageData.description}</div>
+            )}
+          </div>
         </Card>
       </div>
     </div>

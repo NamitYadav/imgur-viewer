@@ -2,6 +2,7 @@
 import React, { Suspense, useEffect, useState } from 'react';
 import { AutoSizer, List, InfiniteLoader } from 'react-virtualized';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import SentimentDissatisfiedIcon from '@material-ui/icons/SentimentDissatisfied';
 
 import useStyles from './gallery-styles';
 import { getGallery } from '../../service/api-service';
@@ -31,22 +32,13 @@ const Gallery = (props) => {
   const classes = useStyles();
 
   const [gallery, updateGallery] = useState([]);
-  const [isFetching, setIsFetching] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
   const [page, setPage] = useState(1);
   const [section, setSection] = useState(Section.HOT);
   const [sort, setSort] = useState(Sort.VIRAL);
   const [windowFilter, setWindow] = useState(Window.DAY);
   const [showViral, setShowViral] = useState(true);
   const [replaceContent, setReplaceContent] = useState(false);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (!isFetching) return;
-    fetchData();
-  }, [isFetching]);
 
   useEffect(() => {
     if (!isFetching) fetchData();
@@ -109,19 +101,23 @@ const Gallery = (props) => {
     return fetchData();
   }
 
-  if (isFetching) {
-    return (
-      <div className={classes.progressContainer}>
-        <CircularProgress size='80px' />;
-      </div>
-    );
-  }
-
   return (
     <div className={classes.root}>
       <AppBar color='default'>
         <Toolbar>
           <div className={classes.filterContainer}>
+            <div className={classes.title}>Imgur Gallery</div>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={showViral}
+                  onChange={handleShowViral}
+                  name='show-viral'
+                  color='primary'
+                />
+              }
+              label='Show Viral'
+            />
             <FormControl variant='outlined' className={classes.formControl}>
               <InputLabel id='section-sort-label'>Section</InputLabel>
               <Select
@@ -137,18 +133,6 @@ const Gallery = (props) => {
                 ))}
               </Select>
             </FormControl>
-            <div className={classes.title}>Imgur Gallery</div>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={showViral}
-                  onChange={handleShowViral}
-                  name='show-viral'
-                  color='primary'
-                />
-              }
-              label='Show Viral'
-            />
             <FormControl variant='outlined' className={classes.formControl}>
               <InputLabel id='sort-select-label'>Sort</InputLabel>
               <Select
@@ -183,95 +167,107 @@ const Gallery = (props) => {
         </Toolbar>
       </AppBar>
 
-      <AutoSizer>
-        {({ height, width }) => {
-          const itemsPerRow = Math.floor(width / CARD_WIDTH) || 1;
+      {isFetching ? (
+        <div className={classes.progressContainer}>
+          <CircularProgress size='80px' />;
+        </div>
+      ) : !gallery || !gallery.length ? (
+        <div className={classes.emptyDiv}>
+          <SentimentDissatisfiedIcon fontSize='large' />
+          <div>Nothing to see here</div>
+        </div>
+      ) : (
+        <AutoSizer>
+          {({ height, width }) => {
+            const itemsPerRow = Math.floor(width / CARD_WIDTH) || 1;
 
-          const rowCount = Math.ceil(gallery.length / itemsPerRow);
+            const rowCount = Math.ceil(gallery.length / itemsPerRow);
 
-          return (
-            <InfiniteLoader
-              isRowLoaded={isRowLoaded}
-              loadMoreRows={loadMoreRows}
-              rowCount={rowCount}
-            >
-              {({ onRowsRendered, registerChild }) => (
-                <List
-                  width={width}
-                  height={height}
-                  ref={registerChild}
-                  onRowsRendered={onRowsRendered}
-                  rowCount={rowCount}
-                  rowHeight={CARD_WIDTH}
-                  rowRenderer={({ index, key, style }) => {
-                    style = {
-                      ...style,
-                      margin: '80px 0',
-                    };
-                    const items = [];
-                    const fromIndex = index * itemsPerRow;
-                    const toIndex = Math.min(fromIndex + itemsPerRow, gallery.length);
+            return (
+              <InfiniteLoader
+                isRowLoaded={isRowLoaded}
+                loadMoreRows={loadMoreRows}
+                rowCount={rowCount}
+              >
+                {({ onRowsRendered, registerChild }) => (
+                  <List
+                    width={width}
+                    height={height}
+                    ref={registerChild}
+                    onRowsRendered={onRowsRendered}
+                    rowCount={rowCount}
+                    rowHeight={CARD_WIDTH}
+                    rowRenderer={({ index, key, style }) => {
+                      style = {
+                        ...style,
+                        margin: '80px 0',
+                      };
+                      const items = [];
+                      const fromIndex = index * itemsPerRow;
+                      const toIndex = Math.min(fromIndex + itemsPerRow, gallery.length);
 
-                    for (let i = fromIndex; i < toIndex; i++) {
-                      let listItem = gallery[i];
+                      for (let i = fromIndex; i < toIndex; i++) {
+                        let listItem = gallery[i];
 
-                      items.push(
-                        <div className={classes.Item} key={i}>
-                          <Card className={classes.card}>
-                            <div className={classes.image}>
-                              <Suspense
-                                fallback={<image src='https://via.placeholder.com/150'></image>}
-                              >
-                                {listItem.images &&
-                                listItem.images[0] &&
-                                (listItem.images[0].type === 'image/jpeg' ||
-                                  listItem.images[0].type === 'image/png' ||
-                                  listItem.images[0].type === 'image/gif') ? (
-                                  <img
-                                    style={{ width: '100%', height: '100%' }}
-                                    src={listItem.images[0].link}
-                                    alt=''
-                                    onClick={() => handleImageClick(listItem.images[0])}
-                                  />
-                                ) : (
-                                  <video
-                                    autoPlay
-                                    loop
-                                    style={{ flex: '1' }}
-                                    onClick={() => handleImageClick(listItem.images[0])}
-                                  >
-                                    <source
-                                      src={
-                                        listItem.images &&
-                                        listItem.images[0] &&
-                                        listItem.images[0].link
-                                      }
-                                      type='video/mp4'
+                        items.push(
+                          <div className={classes.Item} key={i}>
+                            <Card className={classes.card}>
+                              <div className={classes.image}>
+                                <Suspense
+                                  fallback={
+                                    <image src='https://via.placeholder.com/340X305'></image>
+                                  }
+                                >
+                                  {listItem.images &&
+                                  listItem.images[0] &&
+                                  (listItem.images[0].type === 'image/jpeg' ||
+                                    listItem.images[0].type === 'image/png' ||
+                                    listItem.images[0].type === 'image/gif') ? (
+                                    <img
+                                      style={{ width: '100%', height: '100%' }}
+                                      src={listItem.images[0].link}
+                                      alt=''
+                                      onClick={() => handleImageClick(listItem.images[0])}
                                     />
-                                    Your browser does not support the video tag.
-                                  </video>
-                                )}
-                              </Suspense>
-                            </div>
-                            <div className={classes.listTitle}>{listItem.title}</div>
-                          </Card>
+                                  ) : (
+                                    <video
+                                      autoPlay
+                                      loop
+                                      style={{ flex: '1' }}
+                                      onClick={() => handleImageClick(listItem.images[0])}
+                                    >
+                                      <source
+                                        src={
+                                          listItem.images &&
+                                          listItem.images[0] &&
+                                          listItem.images[0].link
+                                        }
+                                        type='video/mp4'
+                                      />
+                                      Your browser does not support the video tag.
+                                    </video>
+                                  )}
+                                </Suspense>
+                              </div>
+                              <div className={classes.listTitle}>{listItem.title}</div>
+                            </Card>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div className={classes.Row} key={key} style={style}>
+                          {items}
                         </div>
                       );
-                    }
-
-                    return (
-                      <div className={classes.Row} key={key} style={style}>
-                        {items}
-                      </div>
-                    );
-                  }}
-                />
-              )}
-            </InfiniteLoader>
-          );
-        }}
-      </AutoSizer>
-      {/* {isFetching && <h1>Fetching more list items...</h1>} */}
+                    }}
+                  />
+                )}
+              </InfiniteLoader>
+            );
+          }}
+        </AutoSizer>
+      )}
     </div>
   );
 };
