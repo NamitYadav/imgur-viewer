@@ -66,7 +66,7 @@ const Gallery = (props) => {
       .catch((error) => console.log('Gallery fetch error', error));
   };
 
-  const handleImageClick = (image) => {
+  const gotoItem = (image) => {
     const { history } = props;
     history.push(`/image/${image.id}`);
   };
@@ -92,12 +92,10 @@ const Gallery = (props) => {
   };
 
   function isRowLoaded({ index }) {
-    console.log('Row:', index, 'Loaded: ', !!gallery[index]);
     return !!gallery[index];
   }
 
   function loadMoreRows({ startIndex, stopIndex }) {
-    console.log(startIndex, stopIndex);
     return fetchData();
   }
 
@@ -212,7 +210,10 @@ const Gallery = (props) => {
                         items.push(
                           <div className={classes.Item} key={i}>
                             <Card className={classes.card}>
-                              <div className={classes.image}>
+                              <div
+                                className={classes.image}
+                                onClick={() => gotoItem((listItem.images && listItem.images[0]) || listItem)}
+                              >
                                 <Suspense
                                   fallback={
                                     <image src='https://via.placeholder.com/340X305'></image>
@@ -225,17 +226,11 @@ const Gallery = (props) => {
                                     listItem.images[0].type === 'image/gif') ? (
                                     <img
                                       style={{ width: '100%', height: '100%' }}
-                                      src={listItem.images[0].link}
+                                      src={listItem.images[0].link || listItem.link}
                                       alt=''
-                                      onClick={() => handleImageClick(listItem.images[0])}
                                     />
                                   ) : (
-                                    <video
-                                      autoPlay
-                                      loop
-                                      style={{ flex: '1' }}
-                                      onClick={() => handleImageClick(listItem.images[0])}
-                                    >
+                                    <video autoPlay loop style={{ flex: '1' }}>
                                       <source
                                         src={
                                           listItem.images &&

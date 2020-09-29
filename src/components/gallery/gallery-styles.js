@@ -9,7 +9,7 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
   },
   root: {
-    padding: '16px 80px',
+    padding: '16px',
     justifyContent: 'flex-start',
     background: '#2d3135',
     minHeight: '100vh',

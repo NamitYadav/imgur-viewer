@@ -32,7 +32,6 @@ const ImageViewer = (props) => {
   };
 
   const handleBack = () => {
-    console.log(props);
     props.history.goBack();
   };
 
