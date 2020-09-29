@@ -25,7 +25,7 @@ const useStyles = makeStyles(() => ({
   card: {
     padding: '8px',
     background: '#474b50',
-    maxWidth: '800px',
+    maxWidth: '1000px',
   },
   image: {
     width: '100%',

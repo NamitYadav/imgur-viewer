@@ -17,6 +17,13 @@ const useStyles = makeStyles(() => ({
       padding: '16px',
     },
   },
+  title: {
+    fontSize: '32px',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    flex: '1',
+    color: '#2d3135',
+  },
   grid: {
     marginTop: '80px',
   },
@@ -54,8 +61,9 @@ const useStyles = makeStyles(() => ({
     height: '250px',
     overflow: 'hidden',
   },
-  title: {
+  listTitle: {
     fontWeight: 'bold',
+    padding: '8px',
     flex: '1',
     display: 'flex',
     alignItems: 'center',
@@ -69,11 +77,11 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     justifyContent: 'center',
     padding: '16px',
-    backgroundColor: '#fafafa',
     width: '100%',
   },
   formControl: {
-    minWidth: 120,
+    minWidth: '120px !important',
+    marginRight: '16px !important',
   },
 }));
 

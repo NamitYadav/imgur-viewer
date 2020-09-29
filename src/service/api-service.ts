@@ -1,7 +1,9 @@
 import { GalleryOptions, Section, Sort, Window } from './models'
 
+const clientID = process.env.REACT_APP_CLIENT_ID;
+
 const myHeaders = new Headers();
-myHeaders.append('Authorization', 'Client-ID 9d9facb48501684');
+myHeaders.append('Authorization', `Client-ID ${clientID}`);
 
 const requestOptions: RequestInit = {
   method: 'GET',

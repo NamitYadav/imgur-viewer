@@ -53,6 +53,7 @@ const Gallery = (props) => {
   }, [section, sort, windowFilter, showViral]);
 
   const fetchData = async () => {
+    setIsFetching(true);
     const galleryOptions = {
       section,
       sort,
@@ -60,19 +61,17 @@ const Gallery = (props) => {
       page,
       showViral,
     };
-    setTimeout(async () => {
-      await getGallery(galleryOptions)
-        .then((response) => response.json())
-        .then((result) => {
-          setPage(page + 1);
-          updateGallery(() => {
-            return replaceContent ? result.data : [...gallery, ...result.data];
-          });
-          setIsFetching(false);
-          setReplaceContent(false);
-        })
-        .catch((error) => console.log('Gallery fetch error', error));
-    }, 1000);
+    await getGallery(galleryOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        setPage(page + 1);
+        updateGallery(() => {
+          return replaceContent ? result.data : [...gallery, ...result.data];
+        });
+        setIsFetching(false);
+        setReplaceContent(false);
+      })
+      .catch((error) => console.log('Gallery fetch error', error));
   };
 
   const handleImageClick = (image) => {
@@ -113,21 +112,21 @@ const Gallery = (props) => {
   if (isFetching) {
     return (
       <div className={classes.progressContainer}>
-        <CircularProgress size="80px" />;
+        <CircularProgress size='80px' />;
       </div>
     );
   }
 
   return (
     <div className={classes.root}>
-      <AppBar position='fixed' color='default'>
+      <AppBar color='default'>
         <Toolbar>
           <div className={classes.filterContainer}>
-            <FormControl className={classes.formControl}>
-              <InputLabel id='demo-simple-select-label'>Section</InputLabel>
+            <FormControl variant='outlined' className={classes.formControl}>
+              <InputLabel id='section-sort-label'>Section</InputLabel>
               <Select
-                labelId='demo-simple-select-label'
-                id='demo-simple-select'
+                labelId='section-sort-label'
+                label='Section'
                 value={section}
                 onChange={(event) => handleSectionChange(event)}
               >
@@ -138,39 +137,7 @@ const Gallery = (props) => {
                 ))}
               </Select>
             </FormControl>
-            <div style={{ flex: '3' }}></div>
-            <FormControl className={classes.formControl}>
-              <InputLabel id='demo-simple-select-label'>Sort</InputLabel>
-              <Select
-                labelId='demo-simple-select-label'
-                id='demo-simple-select'
-                value={sort}
-                onChange={(event) => handleSortParamChange(event)}
-              >
-                {SortParams.map((param, i) => (
-                  <MenuItem key={i} value={param.value}>
-                    {param.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <div style={{ flex: '.25' }}></div>
-            <FormControl className={classes.formControl}>
-              <InputLabel id='demo-simple-select-label'>Window</InputLabel>
-              <Select
-                labelId='demo-simple-select-label'
-                id='demo-simple-select'
-                value={windowFilter}
-                onChange={(event) => handleWindowParamChange(event)}
-              >
-                {WindowParams.map((param, i) => (
-                  <MenuItem key={i} value={param.value}>
-                    {param.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <div style={{ flex: '.25' }}></div>
+            <div className={classes.title}>Imgur Gallery</div>
             <FormControlLabel
               control={
                 <Checkbox
@@ -182,6 +149,36 @@ const Gallery = (props) => {
               }
               label='Show Viral'
             />
+            <FormControl variant='outlined' className={classes.formControl}>
+              <InputLabel id='sort-select-label'>Sort</InputLabel>
+              <Select
+                labelId='sort-select-label'
+                label='Sort'
+                value={sort}
+                onChange={(event) => handleSortParamChange(event)}
+              >
+                {SortParams.map((param, i) => (
+                  <MenuItem key={i} value={param.value}>
+                    {param.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl variant='outlined' className={classes.formControl}>
+              <InputLabel id='window-select-label'>Window</InputLabel>
+              <Select
+                labelId='window-select-label'
+                label='Window'
+                value={windowFilter}
+                onChange={(event) => handleWindowParamChange(event)}
+              >
+                {WindowParams.map((param, i) => (
+                  <MenuItem key={i} value={param.value}>
+                    {param.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </div>
         </Toolbar>
       </AppBar>
@@ -225,16 +222,38 @@ const Gallery = (props) => {
                               <Suspense
                                 fallback={<image src='https://via.placeholder.com/150'></image>}
                               >
-                                <img
-                                  src={
-                                    listItem.images && listItem.images[0] && listItem.images[0].link
-                                  }
-                                  alt=''
-                                  onClick={() => handleImageClick(listItem.images[0])}
-                                />
+                                {listItem.images &&
+                                listItem.images[0] &&
+                                (listItem.images[0].type === 'image/jpeg' ||
+                                  listItem.images[0].type === 'image/png' ||
+                                  listItem.images[0].type === 'image/gif') ? (
+                                  <img
+                                    style={{ width: '100%', height: '100%' }}
+                                    src={listItem.images[0].link}
+                                    alt=''
+                                    onClick={() => handleImageClick(listItem.images[0])}
+                                  />
+                                ) : (
+                                  <video
+                                    autoPlay
+                                    loop
+                                    style={{ flex: '1' }}
+                                    onClick={() => handleImageClick(listItem.images[0])}
+                                  >
+                                    <source
+                                      src={
+                                        listItem.images &&
+                                        listItem.images[0] &&
+                                        listItem.images[0].link
+                                      }
+                                      type='video/mp4'
+                                    />
+                                    Your browser does not support the video tag.
+                                  </video>
+                                )}
                               </Suspense>
                             </div>
-                            <div className={classes.title}>{listItem.title}</div>
+                            <div className={classes.listTitle}>{listItem.title}</div>
                           </Card>
                         </div>
                       );

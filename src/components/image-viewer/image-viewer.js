@@ -48,7 +48,7 @@ const ImageViewer = (props) => {
       <div className='topBar'>
         <Button
           variant='contained'
-          color="primary"
+          color='primary'
           className={classes.button}
           startIcon={<ArrowBackIcon />}
           onClick={handleBack}
@@ -58,7 +58,16 @@ const ImageViewer = (props) => {
       </div>
       <div className={classes.cardContainer}>
         <Card className={classes.card}>
-          <img src={imageData.link} alt='Avatar' className={classes.image} />
+          {imageData.type === 'image/jpeg' ||
+          imageData.type === 'image/png' ||
+          imageData.type === 'image/gif' ? (
+            <img src={imageData.link} alt='Avatar' className={classes.image} />
+          ) : (
+            <video controls autoPlay loop className={classes.image}>
+              <source src={imageData.link} type='video/mp4' />
+            </video>
+          )}
+
           <div className={classes.title}>{imageData.title}</div>
           <div className={classes.title}>{imageData.description}</div>
           <div className={classes.title}>{imageData.vote}</div>
