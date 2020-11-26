@@ -31,6 +31,7 @@ const useStyles = makeStyles(() => ({
     padding: '8px',
     background: '#474b50',
     maxWidth: '1000px',
+    maxHeight: '500px',
   },
   image: {
     width: '100%',

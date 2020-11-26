@@ -28,7 +28,7 @@ import {
 
 const CARD_WIDTH = 340;
 
-const Gallery = (props) => {
+const Gallery = (props: any) => {
   const classes = useStyles();
 
   const [gallery, updateGallery] = useState([]);
@@ -66,36 +66,36 @@ const Gallery = (props) => {
       .catch((error) => console.log('Gallery fetch error', error));
   };
 
-  const gotoItem = (image) => {
+  const gotoItem = (image: any) => {
     const { history } = props;
     history.push(`/image/${image.id}`);
   };
 
-  const handleSectionChange = (event) => {
+  const handleSectionChange = (event: any) => {
     setReplaceContent(true);
     setSection(event.target.value);
   };
 
-  const handleSortParamChange = (event) => {
+  const handleSortParamChange = (event: any) => {
     setReplaceContent(true);
     setSort(event.target.value);
   };
 
-  const handleWindowParamChange = (event) => {
+  const handleWindowParamChange = (event: any) => {
     setReplaceContent(true);
     setWindow(event.target.value);
   };
 
-  const handleShowViral = (event) => {
+  const handleShowViral = (event: any) => {
     setReplaceContent(true);
     setShowViral(event.target.checked);
   };
 
-  function isRowLoaded({ index }) {
+  function isRowLoaded({ index }: any) {
     return !!gallery[index];
   }
 
-  function loadMoreRows({ startIndex, stopIndex }) {
+  function loadMoreRows({ startIndex, stopIndex }: any) {
     return fetchData();
   }
 
@@ -122,8 +122,7 @@ const Gallery = (props) => {
                 labelId='section-sort-label'
                 label='Section'
                 value={section}
-                onChange={(event) => handleSectionChange(event)}
-              >
+                onChange={(event) => handleSectionChange(event)}>
                 {SectionParams.map((param, i) => (
                   <MenuItem key={i} value={param.value}>
                     {param.label}
@@ -137,8 +136,7 @@ const Gallery = (props) => {
                 labelId='sort-select-label'
                 label='Sort'
                 value={sort}
-                onChange={(event) => handleSortParamChange(event)}
-              >
+                onChange={(event) => handleSortParamChange(event)}>
                 {SortParams.map((param, i) => (
                   <MenuItem key={i} value={param.value}>
                     {param.label}
@@ -152,8 +150,7 @@ const Gallery = (props) => {
                 labelId='window-select-label'
                 label='Window'
                 value={windowFilter}
-                onChange={(event) => handleWindowParamChange(event)}
-              >
+                onChange={(event) => handleWindowParamChange(event)}>
                 {WindowParams.map((param, i) => (
                   <MenuItem key={i} value={param.value}>
                     {param.label}
@@ -185,8 +182,7 @@ const Gallery = (props) => {
               <InfiniteLoader
                 isRowLoaded={isRowLoaded}
                 loadMoreRows={loadMoreRows}
-                rowCount={rowCount}
-              >
+                rowCount={rowCount}>
                 {({ onRowsRendered, registerChild }) => (
                   <List
                     width={width}
@@ -205,20 +201,22 @@ const Gallery = (props) => {
                       const toIndex = Math.min(fromIndex + itemsPerRow, gallery.length);
 
                       for (let i = fromIndex; i < toIndex; i++) {
-                        let listItem = gallery[i];
+                        let listItem: any = gallery[i];
 
                         items.push(
                           <div className={classes.Item} key={i}>
                             <Card className={classes.card}>
                               <div
                                 className={classes.image}
-                                onClick={() => gotoItem((listItem.images && listItem.images[0]) || listItem)}
-                              >
+                                onClick={() =>
+                                  gotoItem((listItem.images && listItem.images[0]) || listItem)
+                                }>
                                 <Suspense
                                   fallback={
-                                    <image src='https://via.placeholder.com/340X305'></image>
-                                  }
-                                >
+                                    <img
+                                      src='https://via.placeholder.com/340X305'
+                                      alt='placeholder'></img>
+                                  }>
                                   {listItem.images &&
                                   listItem.images[0] &&
                                   (listItem.images[0].type === 'image/jpeg' ||
@@ -246,7 +244,7 @@ const Gallery = (props) => {
                               </div>
                               <div className={classes.listTitle}>{listItem.title}</div>
                             </Card>
-                          </div>
+                          </div>,
                         );
                       }
 

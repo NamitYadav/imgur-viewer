@@ -1,4 +1,4 @@
-import { GalleryOptions, Section, Sort, Window } from './models'
+import { GalleryOptions, Section, Sort, Window } from './models';
 
 const clientID = process.env.REACT_APP_CLIENT_ID;
 
@@ -12,13 +12,21 @@ const requestOptions: RequestInit = {
 };
 
 export function getGallery(galleryOptions: GalleryOptions = {}) {
-  const { section = Section.HOT, sort = Sort.TOP, window = Window.DAY, page = 1, showViral = false, showMature = false, albumPreviews = false } = galleryOptions;
+  const {
+    section = Section.HOT,
+    sort = Sort.TOP,
+    window = Window.DAY,
+    page = 1,
+    showViral = false,
+    showMature = false,
+    albumPreviews = false,
+  } = galleryOptions;
   return fetch(
     `https://api.imgur.com/3/gallery/${section}/${sort}/${window}/${page}?showViral=${showViral}&mature=${showMature}&album_previews=${albumPreviews}`,
-    requestOptions
-  )
+    requestOptions,
+  );
 }
 
 export function getImage(imageHash: string) {
-  return fetch(`https://api.imgur.com/3/image/${imageHash}`, requestOptions)
+  return fetch(`https://api.imgur.com/3/image/${imageHash}`, requestOptions);
 }

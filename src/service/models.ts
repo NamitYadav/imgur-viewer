@@ -1,20 +1,19 @@
 export enum Section {
   HOT = 'hot',
   TOP = 'top',
-  USER = 'user'
+  USER = 'user',
 }
 
 export const SectionParams = [
   { label: 'Hot', value: Section.HOT },
   { label: 'Top', value: Section.TOP },
-  { label: 'User', value: Section.USER }
+  { label: 'User', value: Section.USER },
 ];
-
 
 export enum Sort {
   VIRAL = 'viral',
   TOP = 'top',
-  TIME = 'time'
+  TIME = 'time',
 }
 
 export const SortParams = [
@@ -28,7 +27,7 @@ export enum Window {
   WEEK = 'week',
   MONTH = 'month',
   YEAR = 'year',
-  ALL = 'all'
+  ALL = 'all',
 }
 
 export const WindowParams = [
@@ -40,11 +39,11 @@ export const WindowParams = [
 ];
 
 export interface GalleryOptions {
-  section?: Section,
-  sort?: Sort,
-  window?: string,
-  page?: Number,
-  showViral?: boolean,
-  showMature?: boolean,
-  albumPreviews?: boolean,
+  section?: Section;
+  sort?: Sort;
+  window?: string;
+  page?: Number;
+  showViral?: boolean;
+  showMature?: boolean;
+  albumPreviews?: boolean;
 }
